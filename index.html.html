@@ -1,0 +1,279 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>श्री हनुमान मंदिर, बर्दगोनिया</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Serif Devanagari', serif;
+            background: linear-gradient(135deg, #fff3e0, #ffe4b5);
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        header {
+            background: linear-gradient(to right, #ff4500, #ffa500);
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+            position: relative;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1.5s ease-in;
+        }
+        header h1 {
+            font-size: 4em;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+            margin-bottom: 15px;
+        }
+        header p {
+            font-size: 1.5em;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            animation: slideUp 1s ease-out;
+        }
+        .welcome-message {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 30px;
+            background: linear-gradient(to bottom, #fffaf0, #fff5e6);
+            border-radius: 15px;
+            border: 6px solid #ffd700;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+        .welcome-message:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+        .welcome-message h2 {
+            color: #b22222;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+        .welcome-message p {
+            font-size: 1.3em;
+            color: #333;
+            font-style: italic;
+        }
+        .section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: linear-gradient(to bottom, #fffaf0, #fff5e6);
+            border-radius: 15px;
+            border-left: 8px solid #ff4500;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        .section:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        .section h2 {
+            color: #b22222;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border-bottom: 4px solid #ffd700;
+            padding-bottom: 12px;
+        }
+        .section p, .section li {
+            font-size: 1.3em;
+            margin: 15px 0;
+        }
+        .chalisa {
+            background: #ffe4b5;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.2em;
+            color: #8b0000;
+            margin-bottom: 50px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .contact-section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: linear-gradient(to bottom, #fffaf0, #fff5e6);
+            border-radius: 15px;
+            border: 6px solid #ff4500;
+            text-align: center;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        .contact-section:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+        .contact-section h2 {
+            color: #b22222;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border-bottom: 4px solid #ffd700;
+            padding-bottom: 12px;
+        }
+        .contact-section p {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .contact-btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(to right, #ff4500, #ffa500);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 1.3em;
+            margin: 20px auto;
+            display: block;
+            width: fit-content;
+            transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+        }
+        .contact-btn:hover {
+            transform: scale(1.1);
+            background: linear-gradient(to right, #ffa500, #ff4500);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        footer {
+            background: linear-gradient(to right, #ff4500, #ffa500);
+            color: white;
+            text-align: center;
+            padding: 40px;
+            font-size: 1.3em;
+            box-shadow: 0 -6px 12px rgba(0, 0, 0, 0.2);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(70px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.8em;
+            }
+            header p {
+                font-size: 1.2em;
+            }
+            .container {
+                margin: 20px;
+                padding: 20px;
+            }
+            .welcome-message h2, .section h2, .contact-section h2 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🚩 जय श्री राम 🚩<br>श्री हनुमान मंदिर, बर्दगोनिया</h1>
+        <p>शक्ति, भक्ति और समर्पण का पावन धाम</p>
+    </header>
+
+    <div class="container">
+        <div class="welcome-message">
+            <h2>स्वागत है श्री हनुमान मंदिर में</h2>
+            <p>श्री हनुमान जी का यह पावन धाम भक्तों के लिए शक्ति और शांति का स्रोत है। यहाँ आकर भक्त अपने मन की शांति और आत्मिक उन्नति का अनुभव करते हैं।</p>
+        </div>
+
+        <div class="chalisa">
+            <h2>हनुमान चालीसा का अंश</h2>
+            <p>श्री गुरु चरन सरोज रज, निज मनु मुकुरु सुधारि।<br>
+            बरनऊँ रघुबर बिमल जसु, जो दायकु फल चारि।।<br>
+            जय हनुमान ज्ञान गुन सागर, जय कपीस तिहुँ लोक उजागर।।</p>
+        </div>
+
+        <div class="section">
+            <h2>मंदिर की जानकारी</h2>
+            <p><strong>प्राण-प्रतिष्ठा:</strong> 3 फरवरी 2025 को भव्य समारोह के साथ प्राण-प्रतिष्ठा संपन्न हुई।</p>
+            <p><strong>पता:</strong> ग्राम एवं पोस्ट - बर्दगोनिया, जिला - देवरिया, उत्तर प्रदेश - 274201</p>
+            <p><strong>लैंडमार्क:</strong> अखाड़ा एवं मंदिर टोला</p>
+            <p>यह पावन मंदिर श्री हनुमान जी के भक्तों के लिए शक्ति, शांति और समृद्धि का केंद्र है। प्रत्येक मंगलवार और शनिवार को विशेष पूजा, हनुमान चालीसा पाठ और भंडारे का आयोजन होता है।</p>
+        </div>
+
+        <div class="section">
+            <h2>पूजा का समय</h2>
+            <ul>
+                <li><strong>प्रातःकालीन आरती:</strong> सुबह 5:30 बजे</li>
+                <li><strong>मंगलवार विशेष पूजा:</strong> सुबह 7:00 बजे से रात्रि 9:00 बजे</li>
+                <li><strong>शनिवार हनुमान चालीसा पाठ:</strong> सायं 5:30 बजे</li>
+                <li><strong>संध्या आरती:</strong> सायं 7:30 बजे</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>आगमन मार्ग</h2>
+            <p>मंदिर देवरिया शहर से लगभग 14-15 किमी दूर स्थित है।</p>
+            <ul>
+                <li><strong>निकटतम रेलवे स्टेशन:</strong> गौरी बाजार रेलवे स्टेशन (लगभग 10 किमी)</li>
+                <li><strong>बस मार्ग:</strong> देवरिया बस स्टैंड से ऑटो-रिक्शा या टैक्सी उपलब्ध</li>
+                <li><strong>लैंडमार्क:</strong> अखाड़ा एवं मंदिर टोला</li>
+            </ul>
+        </div>
+
+        <div class="contact-section">
+            <h2>हमसे जुड़ें</h2>
+            <p>श्री हनुमान जी की कृपा प्राप्त करने के लिए मंदिर से संपर्क करें। दर्शन, पूजा, या विशेष आयोजनों की जानकारी के लिए हमसे जुड़ें।</p>
+            <a href="mailto:info@hanumanmandirbardgonia.org" class="contact-btn"><i class="fas fa-envelope"></i> हमसे जुड़ें 🚩</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 श्री हनुमान मंदिर, बर्दगोनिया। जय श्री राम! जय हनुमान! 🚩</p>
+    </footer>
+</body>
+</html>
